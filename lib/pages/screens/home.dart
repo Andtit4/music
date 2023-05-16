@@ -5,6 +5,7 @@ import 'package:music/models/recent_model_card.dart';
 import 'package:music/pages/widgets/button_icons.dart';
 import 'package:music/pages/widgets/input.dart';
 import 'package:flukit/flukit.dart';
+import 'package:music/pages/widgets/tab_view.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -390,6 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(
                         height: height * .02,
                       ),
+                      TabView(),
                       FutureBuilder<List<SongModel>>(
                         future: _audioQuery.querySongs(
                           sortType: null,
@@ -542,11 +544,4 @@ class _HomeScreenState extends State<HomeScreen> {
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return '$twoDigitMinutes:$twoDigitSeconds';
   }
-
-  /* String durationToString1(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return '$twoDigitMinutes:$twoDigitSeconds';
-  } */
 }
