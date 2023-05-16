@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,6 +10,7 @@ import 'package:flukit/flukit.dart';
 import 'package:music/pages/widgets/tab_view.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,6 +35,41 @@ class _HomeScreenState extends State<HomeScreen> {
   int id = 0;
   int duration = 0;
   late AudioPlayer audioPlayer;
+  String trackName = '';
+  String artistNames = '';
+  String audioUrl = '';
+  String imgTrack = "";
+
+  Future<void> fetchTrackData(String trackId) async {
+    // Remplacez "YOUR_ACCESS_TOKEN" par votre jeton d'accès à l'API Spotify
+    final String accessToken =
+        'BQCLLHYIx-TkyC9H30q8TnxitGMKVsIA4eRHfBau8-5H0dIJarBUUfHOOT5vQrUrFg9tOF0dZZJheqDLBM0f_sOh1BASOG3-dT8GEB8RPB5g7eAcMJj-u6n1xMjhKhEGvOAZSyshx5yRjEhRmHCItysYqseJYxcppWe-43nbk1B_qT_mU6K9VhrGTRuwxGAkXLJ6HTdVqMXIQK36vMR6Q66mAC8ADN4c8WfbgVTq4CaGDByuRcLiT8kIKdpEa3ZWVwXZwr6R8woOELGdHwUWVA';
+
+    final response = await http.get(
+      Uri.parse('https://api.spotify.com/v1/tracks/$trackId'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        final album = data['album'];
+        final images = album['images'];
+        imgTrack = images[0]['url'];
+        trackName = data['name'];
+        artistNames =
+            data['artists'].map((artist) => artist['name']).toList().join(', ');
+        audioUrl = data['preview_url'];
+      });
+      print('____url__$audioUrl');
+
+      // playAudio();
+    } else {
+      print('Erreur lors de la récupération des données de la piste');
+    }
+  }
 
   checkAndRequestPermissions({bool retry = false}) async {
     // The param 'retryRequest' is false, by default.
@@ -268,6 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     audioPlayer.dispose();
     super.dispose();
+    fetchTrackData('35b2aICqZwjqrS7eKAzrjE?si=00d8a7edb7004356');
   }
 
   @override
@@ -381,8 +420,95 @@ class _HomeScreenState extends State<HomeScreen> {
                                           color: Color.fromARGB(255, 9, 72, 94),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(20))),
-                                      child: FluImage(e.img,
-                                          imageSource: ImageSources.network),
+                                      child: Stack(
+                                        fit: StackFit.expand,
+                                        children: [
+                                          FluImage(e.img,
+                                              height: height * .3,
+                                              imageSource:
+                                                  ImageSources.network),
+                                          Positioned(
+                                              bottom: 10,
+                                              left: 15,
+                                              child: Container(
+                                                width: width * .5,
+                                                height: height * .08,
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    color: Color.fromARGB(
+                                                        255, 9, 72, 94),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                          color: Color.fromARGB(
+                                                              185, 53, 52, 52),
+                                                          blurRadius: 12,
+                                                          offset: Offset(0, 1),
+                                                          spreadRadius: 1)
+                                                    ]),
+                                                child: Row(
+                                                  children: [
+                                                    FluButton(
+                                                        onPressed: () async {
+                                                          await audioPlayer
+                                                              .play(UrlSource(
+                                                                  audioUrl));
+                                                        },
+                                                        width: width * .12,
+                                                        backgroundColor:
+                                                            Color.fromARGB(255,
+                                                                18, 90, 116),
+                                                        child: FluIcon(
+                                                          FluIcons.play,
+                                                          color: Colors.white,
+                                                        )),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                          e.name,
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                        ),
+                                                        Text(
+                                                          e.title,
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          197,
+                                                                          245,
+                                                                          241,
+                                                                          241),
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ))
+                                        ],
+                                      ),
                                     ))
                                 .toList(),
                           ),

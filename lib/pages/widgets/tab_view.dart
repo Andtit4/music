@@ -24,26 +24,19 @@ class _TabViewState extends State<TabView> {
         labelStyle: GoogleFonts.poppins(
             color: Colors.white, fontWeight: FontWeight.bold),
         contentPadding: EdgeInsets.all(18),
-        tabs: [
+        tabs: const [
           Tab(
-            // icon: Icon(Icons.directions_car),
             text: "Your playlist",
           ),
           Tab(
-            // icon: Icon(Icons.directions_car),
             text: "Most played",
           ),
           Tab(
-            // icon: Icon(Icons.directions_transit),
             text: "Album",
           ),
           Tab(
             text: 'Artists',
           )
-          // Tab(icon: Icon(Icons.directions_bike)),
-          // Tab(icon: Icon(Icons.directions_car)),
-          // Tab(icon: Icon(Icons.directions_transit)),
-          // Tab(icon: Icon(Icons.directions_bike)),
         ],
       ),
     );
