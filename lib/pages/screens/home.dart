@@ -365,11 +365,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: height * .02,
                       ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Discover\nWe have new for you',
+                            style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Container(
+                            width: width * .15,
+                            height: 2,
+                            color: Colors.white,
+                          )
+                        ],
+                      ),
+                      /* Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(),
-                          FluButton(
+                          
+                          /* FluButton(
                               backgroundColor:
                                   Color.fromARGB(88, 245, 180, 192),
                               width: width * .18,
@@ -396,9 +414,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 FluIcons.radio,
                                 color: Colors.blue,
                               )),
-                          SizedBox()
+                          SizedBox() */
                         ],
-                      ),
+                      ), */
                       SizedBox(
                         height: height * .02,
                       ),
