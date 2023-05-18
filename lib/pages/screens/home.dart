@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _hasPermission = false;
   bool _onPlay = false;
   bool _onPlaying = false;
+  bool _onPlaying1 = false;
   PlayerState playerState = PlayerState.stopped;
   Duration durationPlaying = Duration();
   Duration position = Duration();
@@ -39,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String artistNames = '';
   String audioUrl = '';
   String imgTrack = "";
+  AudioCache audioCache = AudioCache();
 
   Future<void> fetchTrackData(String trackId) async {
     // Remplacez "YOUR_ACCESS_TOKEN" par votre jeton d'accès à l'API Spotify
@@ -283,6 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     /* LogConfig logConfig = LogConfig(logType: LogType.DEBUG);
     _audioQuery.setLogConfig(logConfig); */
+    audioCache.load('reasons.mp3');
     getFile();
     audioPlayer = AudioPlayer();
     audioPlayer.onDurationChanged.listen((Duration duration) {
@@ -427,111 +430,329 @@ class _HomeScreenState extends State<HomeScreen> {
                           physics: BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: musicRecent
-                                .map((e) => Container(
-                                      width: width * .6,
-                                      height: height * .3,
-                                      margin:
-                                          EdgeInsets.only(right: width * .06),
-                                      clipBehavior: Clip.hardEdge,
-                                      decoration: const BoxDecoration(
-                                          color: Color.fromARGB(255, 9, 72, 94),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20))),
-                                      child: Stack(
-                                        fit: StackFit.expand,
-                                        children: [
-                                          FluImage(e.img,
-                                              height: height * .3,
-                                              imageSource:
-                                                  ImageSources.network),
-                                          Positioned(
-                                              bottom: 10,
-                                              left: 15,
-                                              child: Container(
-                                                width: width * .5,
-                                                height: height * .08,
-                                                padding:
-                                                    const EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
+                            children: [
+                              Container(
+                                  width: width * .6,
+                                  height: height * .3,
+                                  margin: EdgeInsets.only(right: width * .06),
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: const BoxDecoration(
+                                      color: Color.fromARGB(255, 9, 72, 94),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20))),
+                                  child: Stack(fit: StackFit.expand, children: [
+                                    FluImage('https://alfitude.com/wp-content/uploads/2018/09/COTIS.jpg',
+                                        height: height * .3,
+                                        imageSource:
+                                            ImageSources.network),
+                                    Positioned(
+                                        bottom: 10,
+                                        left: 15,
+                                        child: Container(
+                                          width: width * .5,
+                                          height: height * .08,
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Color.fromARGB(
+                                                  255, 9, 72, 94),
+                                              boxShadow: [
+                                                BoxShadow(
                                                     color: Color.fromARGB(
-                                                        255, 9, 72, 94),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                          color: Color.fromARGB(
-                                                              185, 53, 52, 52),
-                                                          blurRadius: 12,
-                                                          offset: Offset(0, 1),
-                                                          spreadRadius: 1)
-                                                    ]),
-                                                child: Row(
-                                                  children: [
-                                                    FluButton(
-                                                        onPressed: () async {
-                                                          await audioPlayer
-                                                              .play(UrlSource(
-                                                                  audioUrl));
-                                                        },
-                                                        width: width * .12,
-                                                        backgroundColor:
-                                                            Color.fromARGB(255,
-                                                                18, 90, 116),
-                                                        child: FluIcon(
+                                                        185, 53, 52, 52),
+                                                    blurRadius: 12,
+                                                    offset: Offset(0, 1),
+                                                    spreadRadius: 1)
+                                              ]),
+                                          child: Row(
+                                            children: [
+                                              FluButton(
+                                                  onPressed: () async {
+                                                    AudioCache audioCache =
+                                                        AudioCache();
+                                                    await audioCache
+                                                        .load('reasons.mp3');
+                                                    // .play(
+                                                    //     UrlSource('assets/reasons.mp3'));
+                                                    // await audioPlayer.play();
+
+                                                    setState(() {
+                                                      _onPlaying1 =
+                                                          !_onPlaying1;
+                                                    });
+                                                  },
+                                                  width: width * .12,
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          255, 18, 90, 116),
+                                                  child: _onPlaying1 == true
+                                                      ? FluIcon(
                                                           FluIcons.play,
                                                           color: Colors.white,
+                                                        )
+                                                      : FluIcon(
+                                                          FluIcons.pause,
+                                                          color: Colors.white,
                                                         )),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          e.name,
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                        ),
-                                                        Text(
-                                                          e.title,
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          197,
-                                                                          245,
-                                                                          241,
-                                                                          241),
-                                                                  fontSize: 10,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                              ))
-                                        ],
-                                      ),
-                                    ))
-                                .toList(),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Cotis',
+                                                    style: GoogleFonts.poppins(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    'Reason',
+                                                    style: GoogleFonts.poppins(
+                                                        color: Color.fromARGB(
+                                                            197, 245, 241, 241),
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ))
+                                  ])),
+
+                                  Container(
+                                  width: width * .6,
+                                  height: height * .3,
+                                  margin: EdgeInsets.only(right: width * .06),
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: const BoxDecoration(
+                                      color: Color.fromARGB(255, 9, 72, 94),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20))),
+                                  child: Stack(fit: StackFit.expand, children: [
+                                    FluImage('https://i.ytimg.com/vi/Usbd9lCu2ZI/maxresdefault.jpg',
+                                        height: height * .3,
+                                        imageSource:
+                                            ImageSources.network),
+                                    Positioned(
+                                        bottom: 10,
+                                        left: 15,
+                                        child: Container(
+                                          width: width * .5,
+                                          height: height * .08,
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Color.fromARGB(
+                                                  255, 9, 72, 94),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Color.fromARGB(
+                                                        185, 53, 52, 52),
+                                                    blurRadius: 12,
+                                                    offset: Offset(0, 1),
+                                                    spreadRadius: 1)
+                                              ]),
+                                          child: Row(
+                                            children: [
+                                              FluButton(
+                                                  onPressed: () async {
+                                                    AudioCache audioCache =
+                                                        AudioCache();
+                                                    await audioCache
+                                                        .load('reasons.mp3');
+                                                    // .play(
+                                                    //     UrlSource('assets/reasons.mp3'));
+                                                    // await audioPlayer.play();
+
+                                                    setState(() {
+                                                      _onPlaying1 =
+                                                          !_onPlaying1;
+                                                    });
+                                                  },
+                                                  width: width * .12,
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          255, 18, 90, 116),
+                                                  child: _onPlaying1 == true
+                                                      ? FluIcon(
+                                                          FluIcons.play,
+                                                          color: Colors.white,
+                                                        )
+                                                      : FluIcon(
+                                                          FluIcons.pause,
+                                                          color: Colors.white,
+                                                        )),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Damso',
+                                                    style: GoogleFonts.poppins(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    'Dieu ne mens jamais',
+                                                    style: GoogleFonts.poppins(
+                                                        color: Color.fromARGB(
+                                                            197, 245, 241, 241),
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ))
+                                  ]))
+                            ],
                           ),
                         ),
                       ),
+                      // SizedBox(
+                      //   width: width,
+                      //   height: height * .3,
+                      //   child: SingleChildScrollView(
+                      //     physics: BouncingScrollPhysics(),
+                      //     scrollDirection: Axis.horizontal,
+                      //     child: Row(
+                      //       children: musicRecent
+                      //           .map((e) => Container(
+                      //                 width: width * .6,
+                      //                 height: height * .3,
+                      //                 margin:
+                      //                     EdgeInsets.only(right: width * .06),
+                      //                 clipBehavior: Clip.hardEdge,
+                      //                 decoration: const BoxDecoration(
+                      //                     color: Color.fromARGB(255, 9, 72, 94),
+                      //                     borderRadius: BorderRadius.all(
+                      //                         Radius.circular(20))),
+                      //                 child: Stack(
+                      //                   fit: StackFit.expand,
+                      //                   children: [
+                      //                     FluImage(e.img,
+                      //                         height: height * .3,
+                      //                         imageSource:
+                      //                             ImageSources.network),
+                      //                     Positioned(
+                      //                         bottom: 10,
+                      //                         left: 15,
+                      //                         child: Container(
+                      //                           width: width * .5,
+                      //                           height: height * .08,
+                      //                           padding:
+                      //                               const EdgeInsets.all(10),
+                      //                           decoration: BoxDecoration(
+                      //                               borderRadius:
+                      //                                   BorderRadius.circular(
+                      //                                       20),
+                      //                               color: Color.fromARGB(
+                      //                                   255, 9, 72, 94),
+                      //                               boxShadow: [
+                      //                                 BoxShadow(
+                      //                                     color: Color.fromARGB(
+                      //                                         185, 53, 52, 52),
+                      //                                     blurRadius: 12,
+                      //                                     offset: Offset(0, 1),
+                      //                                     spreadRadius: 1)
+                      //                               ]),
+                      //                           child: Row(
+                      //                             children: [
+                      //                               FluButton(
+                      //                                   onPressed: () async {
+                      //                                     await audioPlayer
+                      //                                         .play(UrlSource(
+                      //                                             audioUrl));
+
+                      //                                     setState(() {
+                      //                                       _onPlaying1 =
+                      //                                           !_onPlaying1;
+                      //                                     });
+                      //                                   },
+                      //                                   width: width * .12,
+                      //                                   backgroundColor:
+                      //                                       Color.fromARGB(255,
+                      //                                           18, 90, 116),
+                      //                                   child: _onPlaying1 ==
+                      //                                           true
+                      //                                       ? FluIcon(
+                      //                                           FluIcons.play,
+                      //                                           color: Colors
+                      //                                               .white,
+                      //                                         )
+                      //                                       : FluIcon(
+                      //                                           FluIcons.pause,
+                      //                                           color: Colors
+                      //                                               .white,
+                      //                                         )),
+                      //                               SizedBox(
+                      //                                 width: 10,
+                      //                               ),
+                      //                               Column(
+                      //                                 crossAxisAlignment:
+                      //                                     CrossAxisAlignment
+                      //                                         .start,
+                      //                                 mainAxisAlignment:
+                      //                                     MainAxisAlignment
+                      //                                         .center,
+                      //                                 children: [
+                      //                                   Text(
+                      //                                     e.name,
+                      //                                     style: GoogleFonts
+                      //                                         .poppins(
+                      //                                             color: Colors
+                      //                                                 .white,
+                      //                                             fontSize: 14,
+                      //                                             fontWeight:
+                      //                                                 FontWeight
+                      //                                                     .bold),
+                      //                                   ),
+                      //                                   Text(
+                      //                                     e.title,
+                      //                                     style: GoogleFonts
+                      //                                         .poppins(
+                      //                                             color: Color
+                      //                                                 .fromARGB(
+                      //                                                     197,
+                      //                                                     245,
+                      //                                                     241,
+                      //                                                     241),
+                      //                                             fontSize: 10,
+                      //                                             fontWeight:
+                      //                                                 FontWeight
+                      //                                                     .bold),
+                      //                                   ),
+                      //                                 ],
+                      //                               )
+                      //                             ],
+                      //                           ),
+                      //                         ))
+                      //                   ],
+                      //                 ),
+                      //               ))
+                      //           .toList(),
+                      //     ),
+                      //   ),
+                      // ),
                       SizedBox(
                         height: height * .02,
                       ),
